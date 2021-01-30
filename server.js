@@ -21,6 +21,8 @@ const fs = require('fs');
 
 container.resolve(function (users, _, admin,home,group) {     //This will take an anonymo us function
 
+    mongoose.set('useFindAndModify', false);
+    mongoose.set('useCreateIndex', true);
     mongoose.Promise = global.Promise;  //This is required for mongoose to work as it has its own promise to work
     // !To connect with DB this is the command
     mongoose.connect('mongodb://localhost/footballkik', { useNewUrlParser: true, useCreateIndex: true,useUnifiedTopology: true }); //Added path to our database 
