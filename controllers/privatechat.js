@@ -1,11 +1,26 @@
-// module.exports = function () {
-//     return{
-//         SetRouting: function(router){
-//             router.get('/chat', this.getchatPage);
-//         },
+const { name } = require("ejs");
 
-//         getchatPage: function (req, res) {
-//             res.render('privatee/privatechat', {user:req.user});
-//         }
-//     }
-// }
+module.exports = function (async, Users) {
+    return{
+        SetRouting: function(router){
+            router.get('/chat/:name', this.getchatPage);
+        },
+
+        getchatPage: function (req, res) {
+            async.parallel([
+                 function (callback) {
+                    Users.findOne({'username': req.user.username})
+                    .populate('request.userId')
+                    .exec((err, result) => {
+                        callback(err, result);
+                    })
+                }
+            ],(err, results) =>{
+                const result1 = results[0];
+                //console.log(result1.request[0].userId);
+                res.render('private/privatechat', {title: ' Konvo Room  - Private Chat', user:req.user,  data: result1});
+            });
+        }
+
+    }
+}
