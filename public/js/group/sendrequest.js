@@ -1,5 +1,3 @@
-
-
 $(document).ready(function(){
     var socket= io();
     var room = $('#groupName').val();
@@ -15,7 +13,7 @@ $(document).ready(function(){
     });
      
      socket.on('newFriendRequest', function(friend){
-        console.log(friend);
+       // console.log(friend);
         $('#reload').load(location.href + ' #reload');
        $(document).on('click', '#accept_friend', function () {
             var senderId = $('#senderId').val();
@@ -64,6 +62,7 @@ $(document).ready(function(){
             type: 'POST',
             data:{
                receiverName: receiverName,
+               //receiver: receiverName,
 
             },
             success: function(){

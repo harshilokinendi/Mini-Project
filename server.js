@@ -49,6 +49,7 @@ container.resolve(function (users, _, admin,home,group,results) {     //This wil
         home.SetRouting(router);
         group.SetRouting(router);
         results.SetRouting(router);
+     //privatechat.SetRouting(router);
         app.use(router);  //Making use of the router 
     }
 
