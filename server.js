@@ -16,10 +16,10 @@ const container = require('./container');  // all this modules will be used only
 const {Users} = require('./helpers/UsersClass');
 const multer = require('multer');
 const fs = require('fs');
+const {Global} = require('./helpers/Global');
 
 
-
-container.resolve(function (users, _, admin,home,group) {     //This will take an anonymo us function
+container.resolve(function (users, _, admin,home,group,results) {     //This will take an anonymo us function
 
     mongoose.set('useFindAndModify', false);
     mongoose.set('useCreateIndex', true);
@@ -40,6 +40,7 @@ container.resolve(function (users, _, admin,home,group) {     //This will take a
         ConfigureExpress(app);
         require('./socket/groupchat')(io,Users);
         require('./socket/friend')(io);
+        require('./socket/globalroom')(io, Global,_);
         // Setting up Router
         const router = require('express-promise-router')();  //since we are using promises we need express-promise-router to set up the router.
         users.SetRouting(router);  //SetRouting is a function present in controller folder/ user.js
@@ -47,6 +48,7 @@ container.resolve(function (users, _, admin,home,group) {     //This will take a
         admin.SetRouting(router); 
         home.SetRouting(router);
         group.SetRouting(router);
+        results.SetRouting(router);
         app.use(router);  //Making use of the router 
     }
 

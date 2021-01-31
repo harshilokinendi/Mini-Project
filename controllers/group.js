@@ -5,6 +5,7 @@ module.exports = function(Users, async){
         SetRouting: function (router) {
             router.get('/group/:name', this.groupPage);
             router.post('/group/:name', this.groupPostPage);
+            router.get('/logout', this.logout);
         },
 
         groupPage: function(req,res){
@@ -26,7 +27,7 @@ module.exports = function(Users, async){
                 res.render('groupchat/group', {title: ' Konvoapp  - Group', user:req.user,  groupName:name, data: result1});
             });
            
-        },
+        },  
 
         groupPostPage: function(req, res){
             async.parallel([
@@ -152,6 +153,12 @@ module.exports = function(Users, async){
                 
             ],(err, results) =>{
                 res.redirect('/group/'+req.params.name);
+            });
+        },
+        logout: function(req, res){
+            req.logout();
+            req.session.destroy((err) => {
+               res.redirect('/');
             });
         }
     }
