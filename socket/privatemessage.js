@@ -12,6 +12,7 @@ module.exports = function (io) {
         text: message.text,
         sender: message.sender
     });
+    io.emit('message display', {});
     callback();
  });
     });
