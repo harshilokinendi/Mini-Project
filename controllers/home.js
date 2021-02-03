@@ -1,4 +1,4 @@
-module.exports = function (async, Club, _, Users,Message) {
+module.exports = function (async, Club, _, Users) {
     return {
         SetRouting: function (router) {
             router.get('/home', this.homePage);
@@ -14,7 +14,7 @@ module.exports = function (async, Club, _, Users,Message) {
                     })
                 },
                 function(callback){
-                    Club.aggregate([{  
+                    Club.aggregate([{ 
                         $group: {
                             _id: "$country"
                         }
@@ -24,55 +24,20 @@ module.exports = function (async, Club, _, Users,Message) {
                     })
                 },
 
-                
-
                 function (callback) {
                     Users.findOne({'username': req.user.username})
                     .populate('request.userId')
                     .exec((err, result) => {
                         callback(err, result);
                     })
-                },
 
-                    function(callback){
-                        const nameRegex = new RegExp("^" + req.user.username.toLowerCase(), "i")
-                        Message.aggregate(
-                            {$match:{$or:[{"senderName":nameRegex}, {"receiverName":nameRegex}]}},
-                            {$sort:{"createdAt":-1}},
-                            {
-                                $group:{"_id":{
-                                "last_message_between":{
-                                    $cond:[
-                                        {
-                                            $gt:[
-                                            {$substr:["$senderName",0,1]},
-                                            {$substr:["$receiverName",0,1]}]
-                                        },
-                                        {$concat:["$senderName"," and ","$receiverName"]},
-                                        {$concat:["$receiverName"," and ","$senderName"]}
-                                    ]
-                                }
-                                }, "body": {$first:"$$ROOT"}
-                                }
-                            }, function(err, newResult){
-                                const arr = [
-                                    {path: 'body.sender', model: 'User'},
-                                    {path: 'body.receiver', model: 'User'}
-                                ];
-                                
-                                Message.populate(newResult, arr, (err, newResult1) => {
-                                    callback(err, newResult1);
-                                });
-                            }
-                        )
-                    },
+                }
 
 
             ], (err, results) => {
                 const res1 = results[0];
                 const res2 = results[1];
                 const res3 = results[2];
-                const res4 = results[3];
                 // console.log(res3);
                 // console.log(res1);
                 const dataChunk = [];
@@ -83,7 +48,7 @@ module.exports = function (async, Club, _, Users,Message) {
                 }
                 const countrySort = _.sortBy(res2, '_id');
                 // console.log(dataChunk);
-                res.render('home',{ title: 'Konvoapp - Home', user:req.user, chunks: dataChunk, country: countrySort, data: res3, chat:res4});
+                res.render('home',{ title: 'Konvoapp - Home', user:req.user, chunks: dataChunk, country: countrySort, data: res3});
             })
         },
 
@@ -103,24 +68,6 @@ module.exports = function (async, Club, _, Users,Message) {
                         callback(err, count);
                     });
                 },
-
-
-                function(callback){
-                    if(req.body.chatId){
-                        Message.update({
-        
-                            '_id': req.body.chatId
-                        },
-                        {
-                            "isRead": true
-                        }, (err,done) => {
-                            console.log(done);
-                            callback(err,done);
-                        }
-                        )
-                    }
-                },
-                
             ], (err, results) => {
                 
                 res.redirect('/home');
@@ -128,9 +75,6 @@ module.exports = function (async, Club, _, Users,Message) {
             
             // FriendResult.PostRequest(req, res, '/home');
         },
-
-       
-
         logout: function(req, res){
             req.logout();
             req.session.destroy((err) => {

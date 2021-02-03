@@ -15,9 +15,5 @@ module.exports = function (io) {
     io.emit('message display', {});
     callback();
  });
-
- socket.on('refresh', function(){
-    io.emit('new refresh', {});
-});
     });
 }
